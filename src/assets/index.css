@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#app {
+  @apply h-full;
+}
+
+html {
+  @apply font-body;
+}
+
+body {
+  @apply dark:bg-black dark:text-white transition-colors select-none;
+}
+
+.correct {
+  @apply text-white bg-green border-0;
+}
+
+.present {
+  @apply text-white bg-yellow border-0;
+}
+
+.absent {
+  @apply text-white border-0 bg-gray-500 dark:bg-gray-700;
+}
+
+h1 {
+  @apply text-xl font-medium text-black leading-none dark:text-white;
+}
+
+h2 {
+  @apply font-medium leading-none text-gray-800 dark:text-gray-200;
+}
+
+p {
+  @apply text-sm leading-6 text-gray-600 dark:text-gray-400;
+}
+
+a {
+  @apply underline decoration-current underline-offset-2 text-gray-800 dark:text-gray-200;
+}
+
+svg {
+  @apply fill-current;
+}
