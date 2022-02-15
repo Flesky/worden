@@ -12,14 +12,27 @@
         <IconCog></IconCog>
       </button>
     </TheHeader>
+    <TransitionGroup
+      name="toast"
+      tag="div"
+      class="flex flex-col fixed z-10 top-0 left-0 items-center w-full h-full pt-24 gap-6"
+    >
+      <BaseToast
+        v-for="(toast, i) in view.toasts"
+        :key="i"
+        @toast-expire="view.toasts.shift()"
+      >
+        {{ toast }}
+      </BaseToast></TransitionGroup
+    >
 
-    <GameContainer>
+    <BaseMain>
       <BoardComponent :board="board"></BoardComponent>
       <KeyboardComponent
         :keyboard="keyboard"
         @handle-click="handleClick"
       ></KeyboardComponent>
-    </GameContainer>
+    </BaseMain>
 
     <Transition name="slide-fade">
       <HelpView v-if="view.name === 'help'"></HelpView>
@@ -40,14 +53,16 @@ import { game } from "./stores/game";
 import { view } from "./stores/view";
 import KeyboardComponent from "./components/game/KeyboardComponent.vue";
 import BoardComponent from "./components/game/BoardComponent.vue";
-import GameContainer from "./components/game/GameContainer.vue";
+import BaseMain from "./components/BaseMain.vue";
 import HelpView from "./views/HelpView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import ResultsView from "./views/ResultsView.vue";
+import BaseToast from "./components/BaseToast.vue";
 
 export default {
   name: "GameView",
   components: {
+    BaseToast,
     ResultsView,
     SettingsView,
     HelpView,
@@ -57,12 +72,13 @@ export default {
     IconCog,
     TheLogo,
     KeyboardComponent,
-    GameContainer,
+    BaseMain,
   },
   data() {
     return {
       guess: [],
       keyboard: [],
+      toasts: [],
 
       screen: null,
       settings,
@@ -92,6 +108,7 @@ export default {
     const gameId = new URLSearchParams(window.location.search).get("word");
     if (gameId) {
       this.initialize(gameId);
+      this.view.pushToast("Playing custom word")
       history.replaceState(null, "", "/");
     } else {
       this.initialize();
@@ -142,20 +159,18 @@ export default {
       if (key.altKey || key.ctrlKey || key.shiftKey) return;
       key = key.keyCode;
 
-      // key 32 - space, 27 - escape
       switch (key) {
-        case 8:
+        case 8: // backspace
           this.backspace();
           break;
-        case 13:
+        case 13: // enter
           this.enter();
           break;
-        case 27:
+        case 27: // escape
           this.view.setView();
           break;
-        // case 32:
-        //   this.initialize();
-        //   break;
+        case 32: // space
+          break;
         default:
           if (key >= 65 && key <= 90) this.type(String.fromCharCode(key));
           break;
@@ -172,13 +187,13 @@ export default {
         this.initialize();
       }
       if (this.guess.length === 0) return;
-      if (this.guess.length < 5) return alert("Too short of a word");
+      if (this.guess.length < 5) return this.view.pushToast("Too short of a word");
       if (
         !wordList
           .concat(wordPool)
           .includes(this.guess.map((letter) => letter.letter).join(""))
       )
-        return alert("Not in word list");
+        return this.view.pushToast("Not in word list");
 
       const secretWord = `${this.game.secretWord}`.split("");
 
@@ -236,14 +251,4 @@ export default {
 };
 </script>
 
-<style>
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  @apply transition;
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  @apply opacity-0 translate-y-4;
-}
-</style>
+<style></style>
