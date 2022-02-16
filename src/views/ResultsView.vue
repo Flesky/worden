@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {game } from "../stores/game";
+import { game } from "../stores/game";
 import { praisePool } from "../assets/words";
 
 import BaseDialog from "../components/BaseDialog.vue";
@@ -45,7 +45,7 @@ export default {
       praise: null,
       emojis: null,
       copied: false,
-      game
+      game,
     };
   },
   created() {
@@ -66,8 +66,6 @@ export default {
       .join("\n");
   },
   methods: {
-
-
     // "Worden | Unlimited Wordle " + this.game.guesses.length + '/'+ 6 + "\n\n" +
     //   this.emojis +
     //   "\n\nTry to beat me! Play the same word here:" +
@@ -76,12 +74,14 @@ export default {
     async copyToClipboard() {
       navigator.clipboard
         .writeText(
-          `Worden | Unlimited Wordle ${this.game.won ? this.game.guesses.length : 'X'}/6
+          `Worden | Unlimited Wordle ${
+            this.game.won ? this.game.guesses.length : "X"
+          }/6
 
-          ${this.emojis}
+${this.emojis}
 
-          Think you can do better? Play the same word here:
-          https://worden.web.app/?word=${this.game.gameId}`
+Think you can do better? Play the same word here:
+https://worden.web.app/?word=${this.game.gameId}`
         )
         .then(() => (this.copied = true));
     },

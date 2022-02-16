@@ -12,19 +12,6 @@
         <IconCog></IconCog>
       </button>
     </TheHeader>
-    <TransitionGroup
-      name="toast"
-      tag="div"
-      class="flex flex-col fixed z-10 top-0 left-0 items-center w-full h-full pt-24 gap-6"
-    >
-      <BaseToast
-        v-for="(toast, i) in view.toasts"
-        :key="i"
-        @toast-expire="view.toasts.shift()"
-      >
-        {{ toast }}
-      </BaseToast></TransitionGroup
-    >
 
     <BaseMain>
       <BoardComponent :board="board"></BoardComponent>
@@ -33,6 +20,9 @@
         @handle-click="handleClick"
       ></KeyboardComponent>
     </BaseMain>
+
+    <ToastComponent :toasts="view.toasts"
+    @toast-expire="view.toasts.shift()"></ToastComponent>
 
     <Transition name="slide-fade">
       <HelpView v-if="view.name === 'help'"></HelpView>
@@ -57,12 +47,12 @@ import BaseMain from "./components/BaseMain.vue";
 import HelpView from "./views/HelpView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import ResultsView from "./views/ResultsView.vue";
-import BaseToast from "./components/BaseToast.vue";
+import ToastComponent from "./components/ToastComponent.vue";
 
 export default {
   name: "GameView",
   components: {
-    BaseToast,
+    ToastComponent,
     ResultsView,
     SettingsView,
     HelpView,
@@ -78,7 +68,6 @@ export default {
     return {
       guess: [],
       keyboard: [],
-      toasts: [],
 
       screen: null,
       settings,
@@ -108,7 +97,7 @@ export default {
     const gameId = new URLSearchParams(window.location.search).get("word");
     if (gameId) {
       this.initialize(gameId);
-      this.view.pushToast("Playing custom word")
+      this.view.pushToast("Playing custom word");
       history.replaceState(null, "", "/");
     } else {
       this.initialize();
@@ -187,7 +176,8 @@ export default {
         this.initialize();
       }
       if (this.guess.length === 0) return;
-      if (this.guess.length < 5) return this.view.pushToast("Too short of a word");
+      if (this.guess.length < 5)
+        return this.view.pushToast("Too short of a word");
       if (
         !wordList
           .concat(wordPool)
