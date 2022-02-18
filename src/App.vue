@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-lg h-full">
+  <div class="mx-auto max-w-lg h-full overflow-hidden">
     <TheHeader>
       <button @click="view.setView('help')" @keydown.esc="$event.target.blur()">
         <IconInfo></IconInfo>
@@ -14,20 +14,29 @@
     </TheHeader>
 
     <BaseMain>
-      <BoardComponent :board="board"></BoardComponent>
+      <BoardComponent :board="board" :shake="shakeRow"></BoardComponent>
       <KeyboardComponent
         :keyboard="keyboard"
         @handle-click="handleClick"
       ></KeyboardComponent>
     </BaseMain>
 
-    <ToastComponent :toasts="view.toasts"
-    @toast-expire="view.toasts.shift()"></ToastComponent>
+    <BaseToastComponent
+      :toasts="view.toasts"
+      @toast-expire="view.toasts.shift()"
+    ></BaseToastComponent>
 
     <Transition name="slide-fade">
       <HelpView v-if="view.name === 'help'"></HelpView>
-      <SettingsView v-else-if="view.name === 'settings'"></SettingsView>
-      <ResultsView v-else-if="view.name === 'results'"></ResultsView>
+      <SettingsView
+        v-else-if="view.name === 'settings'"
+        @initialize="initialize"
+      ></SettingsView>
+      <ResultsView
+        v-else-if="view.name === 'results'"
+        @initialize="initialize"
+      ></ResultsView>
+      <!--      <TestView v-else></TestView>-->
     </Transition>
   </div>
 </template>
@@ -41,18 +50,34 @@ import TheHeader from "./components/TheHeader.vue";
 import { settings } from "./stores/settings";
 import { game } from "./stores/game";
 import { view } from "./stores/view";
-import KeyboardComponent from "./components/game/KeyboardComponent.vue";
-import BoardComponent from "./components/game/BoardComponent.vue";
+import KeyboardComponent from "./components/game/keyboard/KeyboardComponent.vue";
+import BoardComponent from "./components/game/board/BoardComponent.vue";
 import BaseMain from "./components/BaseMain.vue";
 import HelpView from "./views/HelpView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import ResultsView from "./views/ResultsView.vue";
-import ToastComponent from "./components/ToastComponent.vue";
+import BaseToastComponent from "./components/toast/BaseToastComponent.vue";
+
+const toOrdinal = {
+  1: "1st",
+  2: "2nd",
+  3: "3rd",
+  4: "4th",
+  5: "5th",
+};
+
+String.prototype.replaceAt = function (replacement, index) {
+  return (
+    this.substring(0, index) +
+    replacement +
+    this.substring(index + replacement.length)
+  );
+};
 
 export default {
   name: "GameView",
   components: {
-    ToastComponent,
+    BaseToastComponent,
     ResultsView,
     SettingsView,
     HelpView,
@@ -63,11 +88,14 @@ export default {
     TheLogo,
     KeyboardComponent,
     BaseMain,
+    // TestView
   },
   data() {
     return {
       guess: [],
       keyboard: [],
+
+      shakeRow: null,
 
       screen: null,
       settings,
@@ -103,9 +131,6 @@ export default {
       this.initialize();
     }
   },
-  // unmounted() {
-  //   window.removeEventListener("keydown", this.handleKeydown);
-  // },
   watch: {
     "settings.darkTheme": {
       handler(val) {
@@ -121,7 +146,14 @@ export default {
     },
   },
   methods: {
+    shake() {
+      this.shakeRow = this.game.guesses.length;
+      setTimeout(() => {
+        this.shakeRow = null;
+      }, 500);
+    },
     initialize(gameId) {
+      this.view.setView();
       this.keyboard = [];
       ["QWERTYUIOP", " ASDFGHJKL ", "→ZXCVBNM⌫"].forEach((row) => {
         this.keyboard.push(
@@ -138,6 +170,26 @@ export default {
       });
       this.game.initialize(gameId);
       this.guess = [];
+
+      // SPREE
+      // COVER
+      // > RUDER
+
+      // TREES
+      // FORCE
+      // MERGE
+      // > LARGE
+
+      // FORTE
+      // MILLS
+      // CUPID
+      // CYNIC
+      // > CHAIN
+
+      // PARTY
+      // TOPES
+      // STEEP
+      // > UPSET
     },
     handleClick(key) {
       if (key.letter) this.type(key.letter);
@@ -172,32 +224,81 @@ export default {
       if (!this.over) this.guess.pop();
     },
     enter() {
+      const guess = this.guess;
+      const guesses = this.game.guesses;
+
       if (this.over && !this.view.name) {
         this.initialize();
       }
-      if (this.guess.length === 0) return;
-      if (this.guess.length < 5)
-        return this.view.pushToast("Too short of a word");
-      if (
-        !wordList
-          .concat(wordPool)
-          .includes(this.guess.map((letter) => letter.letter).join(""))
-      )
-        return this.view.pushToast("Not in word list");
+      if (guess.length === 0) return;
+      if (guess.length < 5) {
+        this.view.pushToast("Not enough letters");
+        this.shake();
+        return;
+      }
+
+      const guessString = guess.map((letter) => letter.letter).join("");
+
+      if (!wordList.concat(wordPool).includes(guessString)) {
+        this.shake();
+        this.view.pushToast("Not in word list");
+        // return;
+        if (this.settings.hardMode) {
+          for (let i = 4; i >= 0; --i) {
+            this.guess[i].evaluation = "invalid";
+          }
+          guesses.push(guess)
+          this.guess = []
+        }
+        return;
+      }
 
       const secretWord = `${this.game.secretWord}`.split("");
 
+      if (this.settings.hardMode) {
+        let error = null;
+        errorChecking: for (let checkGuess of guesses) {
+          for (let i = 0; i < 5; ++i) {
+            const checkLetter = checkGuess[i];
+            const guessLetter = guessString[i];
+            const ordinal = toOrdinal[i + 1];
+            switch (checkLetter.evaluation) {
+              case "correct":
+                // CORRECT letters MUST be used where it is right
+                if (checkLetter.letter !== guessLetter) {
+                  error = `${ordinal} letter must be ${checkLetter.letter}`;
+                }
+                break;
+              case "present":
+                if (checkLetter.letter === guessLetter) {
+                  error = `${ordinal} letter must not be ${guessLetter}`;
+                }
+                else if (!guessString.includes(checkLetter.letter)) {
+                  error = `${checkLetter.letter} must be used`;
+                }
+                break;
+            }
+            if (error) break errorChecking;
+          }
+        }
+        if (error) {
+          this.view.pushToast(error);
+          this.shake();
+          return;
+        }
+      }
+
       let correct = true;
       for (let i = 4; i >= 0; --i) {
-        if (this.guess[i].letter === secretWord[i]) {
-          this.guess[i].evaluation = "correct";
+        if (guessString[i] === secretWord[i]) {
+          guess[i].evaluation = "correct";
           secretWord.splice(i, 1);
         } else {
           correct = false;
         }
       }
 
-      this.guess.forEach((letter) => {
+      guess.forEach((letter) => {
         if (letter.evaluation) return;
         if (secretWord.includes(letter.letter)) {
           letter.evaluation = "present";
@@ -209,18 +310,18 @@ export default {
 
       this.keyboard.forEach((row) => {
         row.forEach((key) => {
-          if (this.guess.some((letter) => letter.letter === key.letter)) {
-            this.guess
+          if (guess.some((letter) => letter.letter === key.letter)) {
+            guess
               .filter((letter) => letter.letter === key.letter)
               .forEach((letter) => {
-                if (key.evaluation === "correct" || key.evaluation === "absent")
-                  return;
-                if (
-                  (key.evaluation === " present" &&
+                if (key.evaluation === "correct") return;
+                else if (
+                  (key.evaluation === "present" &&
                     letter.evaluation === "correct") ||
                   key.evaluation === undefined
-                )
+                ) {
                   key.evaluation = letter.evaluation;
+                }
               });
           }
         });
@@ -230,8 +331,8 @@ export default {
         this.game.won = true;
       }
 
-      this.game.guesses.push(this.guess);
-      if (this.game.won || this.game.guesses.length === 6) {
+      guesses.push(guess);
+      if (this.game.won || guesses.length === 6) {
         this.view.setView("results");
       }
 

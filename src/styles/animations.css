@@ -1,0 +1,32 @@
+@keyframes pop {
+    from {
+        @apply scale-75 opacity-0
+    }
+
+    40% {
+        @apply scale-110 opacity-100
+    }
+}
+
+@keyframes shake {
+    10%,
+    90% {
+        transform: translateX(-1px);
+    }
+
+    20%,
+    80% {
+        transform: translateX(2px);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translateX(-4px);
+    }
+
+    40%,
+    60% {
+        transform: translateX(4px);
+    }
+}

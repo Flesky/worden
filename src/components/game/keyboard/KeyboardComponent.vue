@@ -18,7 +18,6 @@ import KeyboardSpacer from "./KeyboardSpacer.vue";
 import KeyboardButton from "./KeyboardButton.vue";
 
 export default {
-  name: "KeyboardComponent",
   components: {
     KeyboardSpacer,
     KeyboardContainer,

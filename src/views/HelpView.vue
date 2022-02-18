@@ -1,7 +1,7 @@
 <template>
   <BaseDialog>
     <h1>How to play</h1>
-    <p class="mt-3">Guess the secret word in six tries!</p>
+    <p class="mt-3">Guess the secret word in six tries! Each guess must be a valid five-letter word.</p>
     <p class="mt-3">
       After each guess, the tiles will change colors to reflect how close your
       guess was to the word.
@@ -66,7 +66,7 @@
 
 <script>
 import BaseDialog from "../components/BaseDialog.vue";
-import BoardRowComponent from "../components/game/BoardRowComponent.vue";
+import BoardRowComponent from "../components/game/board/BoardRowComponent.vue";
 export default {
   name: "HelpView",
   components: { BoardRowComponent, BaseDialog },

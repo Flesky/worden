@@ -11,9 +11,3 @@
     <path d="M11 11h2v6h-2zm0-4h2v2h-2z"></path>
   </svg>
 </template>
-
-<script>
-export default {
-  name: "IconInfo",
-};
-</script>

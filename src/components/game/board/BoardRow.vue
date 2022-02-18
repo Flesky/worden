@@ -1,8 +1,7 @@
 <template>
   <div
-    class="flex gap-1 w-full"
-    name="list"
-    :class="[center ? '' : 'justify-center']"
+    class="flex space-x-1 w-full"
+    :class="[center ? '' : 'justify-center', shake ? 'animate-shake' : '']"
   >
     <slot></slot>
   </div>
@@ -10,7 +9,6 @@
 
 <script>
 export default {
-  name: "BoardRow",
   components: {},
   props: {
     word: Object,
@@ -18,6 +16,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    shake: {
+      type: Boolean,
+      default: false,
+    }
   },
 };
 </script>

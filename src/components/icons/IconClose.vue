@@ -10,9 +10,3 @@
     ></path>
   </svg>
 </template>
-
-<script>
-export default {
-  name: "IconClose",
-};
-</script>

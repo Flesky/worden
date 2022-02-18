@@ -11,7 +11,6 @@
 import BaseSwitch from "../BaseSwitch.vue";
 
 export default {
-  name: "SettingsItem",
   components: { BaseSwitch },
   props: {
     enabled: Boolean,

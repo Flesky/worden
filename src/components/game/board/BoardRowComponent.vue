@@ -14,7 +14,6 @@ import BoardRow from "./BoardRow.vue";
 import BoardTile from "./BoardTile.vue";
 
 export default {
-  name: "BoardRowComponent",
   components: { BoardRow, BoardTile },
   props: {
     word: Object,

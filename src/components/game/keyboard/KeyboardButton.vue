@@ -10,7 +10,6 @@
 
 <script>
 export default {
-  name: "KeyboardButton",
   props: {
     keyboardKey: Object,
   },

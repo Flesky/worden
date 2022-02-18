@@ -1,0 +1,33 @@
+html,
+body,
+#app {
+    @apply h-full;
+}
+
+body {
+    @apply font-body;
+}
+
+body {
+    @apply dark:bg-black dark:text-white transition-colors select-none;
+}
+
+h1 {
+    @apply text-xl font-medium text-black leading-none dark:text-white;
+}
+
+h2 {
+    @apply font-medium leading-none text-gray-800 dark:text-gray-200;
+}
+
+p {
+    @apply text-sm leading-6 text-gray-600 dark:text-gray-400;
+}
+
+a {
+    @apply underline decoration-current underline-offset-2 text-gray-800 dark:text-gray-200;
+}
+
+svg {
+    @apply fill-current;
+}

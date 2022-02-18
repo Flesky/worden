@@ -9,7 +9,6 @@
     "deploy": "firebase deploy --only hosting:worden"
   },
   "dependencies": {
-    "pinia": "^2.0.11",
     "vue": "^3.2.29"
   },
   "devDependencies": {

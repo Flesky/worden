@@ -2,24 +2,42 @@
   <BaseDialog>
     <h1>Interface</h1>
     <SettingsItem
-      @switch="settings.toggleDarkTheme()"
+      @switch="
+        () => {
+          settings.toggleDarkTheme();
+          $emit('initialize');
+        }
+      "
       :enabled="settings.darkTheme"
       ><h2>Dark theme</h2></SettingsItem
     >
     <h1 class="mt-12">Difficulty</h1>
-    <!--    <SettingsItem-->
-    <!--      @switch="settings.toggleHardMode()"-->
-    <!--      :enabled="settings.hardMode"-->
-    <!--    >-->
-    <!--      <h2>Hard mode</h2>-->
-    <!--      <p>All discovered letters must be used in subsequent guesses</p>-->
-    <!--    </SettingsItem>-->
     <SettingsItem
-      @switch="settings.toggleExpandedMode()"
+      @switch="
+        () => {
+          settings.toggleHardMode();
+          $emit('initialize');
+        }
+      "
+      :enabled="settings.hardMode"
+    >
+      <h2>Hard mode</h2>
+      <p>
+        All discovered letters must be used in subsequent guesses and invalid
+        guesses count
+      </p>
+    </SettingsItem>
+    <SettingsItem
+      @switch="
+        () => {
+          settings.toggleExpandedMode();
+          $emit('initialize');
+        }
+      "
       :enabled="settings.expandedMode"
     >
       <h2>Extended mode</h2>
-      <p>Use the expanded word list that contains harder words</p>
+      <p>Use the complete word list that contains harder to guess words</p>
     </SettingsItem>
   </BaseDialog>
 </template>
@@ -34,8 +52,9 @@ export default {
   components: { BaseDialog, SettingsItem },
   data() {
     return {
-      settings
-    }
-  }
+      settings,
+    };
+  },
+  emits: ["initialize"],
 };
 </script>

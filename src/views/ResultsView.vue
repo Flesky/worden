@@ -14,21 +14,19 @@
 
     <h2 class="mt-12">Share this word</h2>
     <p class="mt-3">Send this link to a friend for them to play this word.</p>
-    <div class="flex items-center gap-4 mt-3">
+    <button
+      class="bg-green text-white text-sm rounded px-3 py-2 mt-3"
+      @click.prevent="copyToClipboard"
+    >
+      Share
+    </button>
+    <div>
       <button
-        class="bg-green text-white text-sm rounded px-3 py-2"
-        @click.prevent="copyToClipboard"
+        class="bg-green text-white text-sm rounded px-3 py-2 mt-12"
+        @click.prevent="$emit('initialize')"
       >
-        Share
-      </button>
-      <Transition name="fade">
-        <p v-if="copied" class="text-gray-800 dark:text-gray-200">
-          Copied to clipboard!
-        </p></Transition
-      >
-    </div>
-    <h2 class="mt-12">Play again</h2>
-    <p class="mt-3">To play again, dismiss this popup and press Enter.</p>
+        Play again
+      </button></div>
   </BaseDialog>
 </template>
 
@@ -37,6 +35,7 @@ import { game } from "../stores/game";
 import { praisePool } from "../assets/words";
 
 import BaseDialog from "../components/BaseDialog.vue";
+import { view } from "../stores/view";
 export default {
   name: "ResultsView",
   components: { BaseDialog },
@@ -46,6 +45,7 @@ export default {
       emojis: null,
       copied: false,
       game,
+      view,
     };
   },
   created() {
@@ -66,12 +66,8 @@ export default {
       .join("\n");
   },
   methods: {
-    // "Worden | Unlimited Wordle " + this.game.guesses.length + '/'+ 6 + "\n\n" +
-    //   this.emojis +
-    //   "\n\nTry to beat me! Play the same word here:" +
-    //   "\nhttps://worden.web.app/?word=" +
-    //   this.game.gameId
     async copyToClipboard() {
+      this.view.pushToast("Copied to clipboard");
       navigator.clipboard
         .writeText(
           `Worden | Unlimited Wordle ${
@@ -86,5 +82,6 @@ https://worden.web.app/?word=${this.game.gameId}`
         .then(() => (this.copied = true));
     },
   },
+  emits: ["initialize"],
 };
 </script>

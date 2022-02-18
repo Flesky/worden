@@ -1,12 +1,15 @@
 <template>
-  <div class="bg-black rounded px-4 py-2 text-white dark:bg-white dark:text-black">
-    <slot></slot>
+  <div class="flex justify-center w-full">
+    <div
+      class="px-4 py-2 w-max text-white rounded bg-black dark:bg-white dark:text-black"
+    >
+      <slot></slot>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "BaseToast",
   props: {
     message: String,
   },

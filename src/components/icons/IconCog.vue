@@ -13,9 +13,3 @@
     ></path>
   </svg>
 </template>
-
-<script>
-export default {
-  name: "IconCog",
-};
-</script>
