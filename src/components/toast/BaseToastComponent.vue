@@ -7,7 +7,8 @@
         @toast-expire="$emit('toastExpire')"
         >{{ message }}</BaseToastItem
       >
-    </TransitionGroup></BaseToastContainer>
+    </TransitionGroup></BaseToastContainer
+  >
 </template>
 
 <script>

@@ -8,15 +8,6 @@
     @apply opacity-0;
 }
 
-/*.fade-move {*/
-/*    @apply transition*/
-/*}*/
-
-/*.fade-leave-active {*/
-/*    @apply absolute*/
-/*}*/
-
-
 .toast-leave-active {
     @apply transition;
 }

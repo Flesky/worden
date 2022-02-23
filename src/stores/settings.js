@@ -1,11 +1,16 @@
 import { reactive } from "vue";
 
 export const settings = reactive({
-  ...(JSON.parse(localStorage.getItem("settings")) || {
-    darkTheme: false,
-    hardMode: false,
-    expandedMode: false,
-  }),
+  darkTheme: JSON.parse(localStorage.getItem("settings"))
+    ? JSON.parse(localStorage.getItem("settings")).darkTheme
+    : false,
+  hardMode: false,
+  expandedMode: false,
+  // ...(JSON.parse(localStorage.getItem("settings")) || {
+  //   darkTheme: false,
+  //   hardMode: false,
+  //   expandedMode: false,
+  // }),
   toggleDarkTheme() {
     this.darkTheme = !this.darkTheme;
   },

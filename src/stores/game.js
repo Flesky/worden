@@ -8,47 +8,31 @@ export const game = reactive({
   guesses: [],
   won: false,
   initialize(gameId) {
+    let status = null;
     this.secretWord = null;
-    if (gameId) {
-      try {
+    try {
+      if (gameId) {
         if (wordPool.concat(wordList).includes(atob(gameId))) {
           this.secretWord = atob(gameId);
           this.gameId = gameId;
+          status = "Playing custom word";
+        } else status = "Invalid link, playing random word";
+      }
+    } catch (DOMException) {
+      status = "Invalid link, playing random word";
+    } finally {
+      if (!this.secretWord) {
+        let pool = wordPool;
+        if (settings.expandedMode) {
+          pool = pool.concat(wordList);
         }
-        // eslint-disable-next-line no-empty
-      } catch (DOMException) {
-      } finally {
+        this.secretWord = pool[Math.floor(Math.random() * pool.length)];
+        this.gameId = btoa(this.secretWord);
+        this.gameId = this.gameId.slice(0, this.gameId.indexOf("="));
       }
     }
-
-    if (!this.secretWord) {
-      let pool = wordPool;
-      if (settings.expandedMode) {
-        pool = pool.concat(wordList);
-      }
-      this.secretWord = pool[Math.floor(Math.random() * pool.length)];
-      this.gameId = btoa(this.secretWord);
-      this.gameId = this.gameId.slice(0, this.gameId.indexOf("="));
-    }
-
     this.guesses = [];
     this.won = false;
+    return status;
   },
 });
-
-// export const useGameStore = reactive({
-//   id: "game",
-//   state: () => ({
-//     secretWord: null,
-//     gameId: null,
-//     guesses: [],
-//
-//     won: false,
-//   }),
-//   getters: {
-//     over: (state) => {
-//       return state.guesses.length > 5 || state.won;
-//     },
-//   },
-//   actions: {},
-// });

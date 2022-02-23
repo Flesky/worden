@@ -26,11 +26,16 @@
         @click.prevent="$emit('initialize')"
       >
         Play again
-      </button></div>
+      </button>
+    </div>
   </BaseDialog>
 </template>
 
 <script>
+// Worden Daily | Wordle 243 X/6
+// Worden Endless
+// Worden Hard Mode X/6
+
 import { game } from "../stores/game";
 import { praisePool } from "../assets/words";
 
@@ -49,15 +54,15 @@ export default {
     };
   },
   created() {
-    if (this.game.won)
+    if (this.game.won) {
       this.praise = praisePool[Math.floor(Math.random() * praisePool.length)];
-    // if (this.game.guesses) {}
+    }
     this.emojis = this.game.guesses
       .map((guess) =>
         guess
           .map(
             (letter) =>
-              ({ correct: "🟩", present: "🟨", absent: "⬛" }[
+              ({ correct: "🟩", present: "🟨", absent: "⬛", invalid: "🟥" }[
                 letter.evaluation
               ])
           )

@@ -22,7 +22,7 @@ export default {
       return this.tile
         ? this.tile.evaluation === undefined
           ? "border-gray-400 dark:border-gray-500 dark:text-white animate-pop"
-          : this.tile.evaluation + ' transition border-0'
+          : this.tile.evaluation + " transition border-0"
         : "border-gray-200 dark:border-gray-700";
     },
     smallStyle() {

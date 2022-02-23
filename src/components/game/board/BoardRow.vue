@@ -19,7 +19,7 @@ export default {
     shake: {
       type: Boolean,
       default: false,
-    }
+    },
   },
 };
 </script>

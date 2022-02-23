@@ -1,6 +1,6 @@
 <template>
   <button
-    class="focus:outline-none active:brightness-75 select-none ml-1 h-10 hi:h-14 leading-10 hi:leading-[3.5rem] text-center align-middle rounded transition"
+    class="focus:outline-none select-none ml-1 h-10 hi:h-14 leading-10 hi:leading-[3.5rem] text-center align-middle rounded transition"
     :class="classObject"
     tabindex="-1"
   >
