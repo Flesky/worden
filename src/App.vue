@@ -1,43 +1,46 @@
 <template>
-  <div class="mx-auto max-w-lg h-full overflow-x-hidden">
-    <TheHeader>
-      <button @click="view.setView('help')" @keydown.esc="$event.target.blur()">
-        <IconInfo></IconInfo>
-      </button>
-      <TheLogo></TheLogo>
-      <button
-        @click="view.setView('settings')"
-        @keydown.esc="$event.target.blur()"
-      >
-        <IconCog></IconCog>
-      </button>
-    </TheHeader>
+  <TheHeader>
+    <button
+      aria-label="Info"
+      @click="view.setView('help')"
+      @keydown.esc="$event.target.blur()"
+    >
+      <IconInfo></IconInfo>
+    </button>
+    <TheLogo></TheLogo>
+    <button
+      aria-label="Settings"
+      @click="view.setView('settings')"
+      @keydown.esc="$event.target.blur()"
+    >
+      <IconCog></IconCog>
+    </button>
+  </TheHeader>
 
-    <BaseMain>
-      <BoardComponent :board="board" :shake="shakeRow"></BoardComponent>
-      <KeyboardComponent
-        :keyboard="keyboard"
-        @handle-click="handleClick"
-      ></KeyboardComponent>
-    </BaseMain>
+  <BaseMain>
+    <BoardComponent :board="board" :shake="shakeRow"></BoardComponent>
+    <KeyboardComponent
+      :keyboard="keyboard"
+      @handle-click="handleClick"
+    ></KeyboardComponent>
+  </BaseMain>
 
-    <BaseToastComponent
-      :toasts="view.toasts"
-      @toast-expire="view.toasts.shift()"
-    ></BaseToastComponent>
+  <BaseToastComponent
+    :toasts="view.toasts"
+    @toast-expire="view.toasts.shift()"
+  ></BaseToastComponent>
 
-    <Transition name="slide-fade">
-      <HelpView v-if="view.name === 'help'"></HelpView>
-      <SettingsView
-        v-else-if="view.name === 'settings'"
-        @initialize="initialize"
-      ></SettingsView>
-      <ResultsView
-        v-else-if="view.name === 'results'"
-        @initialize="initialize"
-      ></ResultsView>
-    </Transition>
-  </div>
+  <Transition name="slide-fade">
+    <HelpView v-if="view.name === 'help'"></HelpView>
+    <SettingsView
+      v-else-if="view.name === 'settings'"
+      @initialize="initialize"
+    ></SettingsView>
+    <ResultsView
+      v-else-if="view.name === 'results'"
+      @initialize="initialize"
+    ></ResultsView>
+  </Transition>
 </template>
 
 <script>
@@ -112,13 +115,44 @@ export default {
   created() {
     window.addEventListener("keydown", this.handleKeydown);
 
-    const gameId = new URLSearchParams(window.location.search).get("word");
-    if (gameId) {
-      const status = this.initialize(gameId);
-      if (status) this.view.pushToast(status);
+    this.initializeKeyboard();
+    const params = Object.fromEntries(
+      new URLSearchParams(window.location.search)
+    );
+
+    // If params, initialize param, override local
+    // If not params, load local storage
+    if (Object.keys(params).length) {
+      if (params.word) {
+        const status = this.initialize(params.word);
+        if (status) this.view.pushToast(status);
+      }
+      if (params.mode) {
+        switch (params.mode) {
+          case "hard":
+            this.settings.hardMode = true;
+            break;
+        }
+      } else {
+        this.settings.hardMode = false;
+      }
       history.replaceState(null, "", "/");
-    } else {
+    }
+
+    if (!this.settings.onboarding) {
+      this.view.setView("help");
+      this.settings.onboarding = true;
+    }
+
+    if (this.over || !this.game.secretWord) {
       this.initialize();
+    } else {
+      this.game.guesses.forEach((guess) => {
+        this.updateKeyboard(
+          guess,
+          guess.map((letter) => letter.letter).join("")
+        );
+      });
     }
   },
   watch: {
@@ -134,6 +168,17 @@ export default {
       },
       deep: true,
     },
+    game: {
+      handler(val) {
+        localStorage.setItem("game", JSON.stringify(val));
+      },
+      deep: true,
+    },
+    over: {
+      handler(val) {
+        if (val) this.view.setView("results");
+      },
+    },
   },
   methods: {
     shake() {
@@ -142,8 +187,7 @@ export default {
         this.shakeRow = null;
       }, 500);
     },
-    initialize(gameId) {
-      this.view.setView();
+    initializeKeyboard() {
       this.keyboard = [];
       ["QWERTYUIOP", " ASDFGHJKL ", "→ZXCVBNM⌫"].forEach((row) => {
         this.keyboard.push(
@@ -158,7 +202,30 @@ export default {
             )
         );
       });
+    },
+    updateKeyboard(guess, guessString) {
+      this.keyboard.forEach((row) => {
+        row.forEach((key) => {
+          if (guessString.includes(key.letter)) {
+            guess
+              .filter((letter) => letter.letter === key.letter)
+              .forEach((letter) => {
+                if (key.evaluation === "correct") return;
+                else if (
+                  letter.evaluation === "correct" ||
+                  key.evaluation === undefined
+                ) {
+                  key.evaluation = letter.evaluation;
+                }
+              });
+          }
+        });
+      });
+    },
+    initialize(gameId) {
+      this.view.setView();
       this.guess = [];
+      this.initializeKeyboard();
       return this.game.initialize(gameId);
     },
     handleClick(key) {
@@ -202,25 +269,28 @@ export default {
       if (guess.length === 0) return;
 
       const guessString = guess.map((letter) => letter.letter).join("");
-      const playtesters = [
-        "JIWON",
-        "KISH",
-        "KYO",
-        "TUMBS",
-        "GELA",
-        "ZED",
-        "KENN",
-        "EMMAN",
-        "YANNA",
-        "KAT",
-        "CHANZ",
-        "DAVID",
-        "ASIA",
-      ];
-      if (playtesters.includes(guessString)) {
-        this.view.pushToast("Thanks for playtesting the game!");
-        this.guess = [];
-        return;
+      if (guesses.length === 0) {
+        const playtesters = [
+          "JIWON",
+          "KISH",
+          "KYO",
+          "TUMBS",
+          "GELA",
+          "ZED",
+          "KENN",
+          "EMMAN",
+          "YANNA",
+          "KAT",
+          "CHANZ",
+          "CHAI",
+          "DAVID",
+          "ASIA",
+        ];
+        if (playtesters.includes(guessString)) {
+          this.view.pushToast("Thanks for playtesting the game!");
+          this.guess = [];
+          return;
+        }
       }
 
       if (guess.length < 5) {
@@ -298,32 +368,13 @@ export default {
         }
       });
 
-      this.keyboard.forEach((row) => {
-        row.forEach((key) => {
-          if (guessString.includes(key.letter)) {
-            guess
-              .filter((letter) => letter.letter === key.letter)
-              .forEach((letter) => {
-                if (key.evaluation === "correct") return;
-                else if (
-                  letter.evaluation === "correct" ||
-                  key.evaluation === undefined
-                ) {
-                  key.evaluation = letter.evaluation;
-                }
-              });
-          }
-        });
-      });
+      this.updateKeyboard(guess, guessString);
 
       if (correct) {
         this.game.won = true;
       }
 
       guesses.push(guess);
-      if (this.game.won || guesses.length === 6) {
-        this.view.setView("results");
-      }
 
       this.guess = [];
     },

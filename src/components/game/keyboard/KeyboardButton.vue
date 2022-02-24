@@ -17,7 +17,7 @@ export default {
     classObject() {
       return [
         this.keyboardKey.letter ? "w-10" : "w-[3.875rem]",
-        this.keyboardKey.evaluation
+        this.keyboardKey.evaluation && this.keyboardKey.evaluation !== "invalid"
           ? this.keyboardKey.evaluation
           : "bg-gray-200 dark:bg-gray-500 dark:text-white",
       ];

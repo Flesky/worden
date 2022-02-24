@@ -5,6 +5,7 @@
     <div class="relative mx-auto max-w-lg h-full">
       <button
         v-if="close"
+        aria-label="Close"
         @keyup.esc="view.setView()"
         @click="view.setView()"
         class="absolute top-4 right-4"
@@ -35,6 +36,5 @@ export default {
       view,
     };
   },
-  emits: ["closeDialog"],
 };
 </script>

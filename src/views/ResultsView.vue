@@ -8,7 +8,7 @@
       </p>
     </template>
     <template v-else>
-      <h1>Better luck next time!</h1>
+      <h1 ref="heading" tabindex="-1">Better luck next time!</h1>
       <p class="mt-3">The word was {{ game.secretWord }}.</p>
     </template>
 
@@ -37,10 +37,12 @@
 // Worden Hard Mode X/6
 
 import { game } from "../stores/game";
+import { settings } from "../stores/settings";
 import { praisePool } from "../assets/words";
 
 import BaseDialog from "../components/BaseDialog.vue";
 import { view } from "../stores/view";
+
 export default {
   name: "ResultsView",
   components: { BaseDialog },
@@ -48,8 +50,9 @@ export default {
     return {
       praise: null,
       emojis: null,
-      copied: false,
+      URL: null,
       game,
+      settings,
       view,
     };
   },
@@ -71,6 +74,14 @@ export default {
       .join("\n");
   },
   methods: {
+    getURL() {
+      let params = new URLSearchParams();
+      params.append("word", this.game.gameId);
+      if (this.settings.hardMode) {
+        params.append("mode", "hard");
+      }
+      return "https://worden.web.app/?" + params.toString();
+    },
     async copyToClipboard() {
       this.view.pushToast("Copied to clipboard");
       navigator.clipboard
@@ -82,7 +93,7 @@ export default {
 ${this.emojis}
 
 Think you can do better? Play the same word here:
-https://worden.web.app/?word=${this.game.gameId}`
+${this.getURL()}`
         )
         .then(() => (this.copied = true));
     },

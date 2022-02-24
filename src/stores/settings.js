@@ -1,23 +1,12 @@
 import { reactive } from "vue";
 
+// const unwrap = ({ darkTheme, onboarding }) => ({ darkTheme, onboarding });
+
 export const settings = reactive({
-  darkTheme: JSON.parse(localStorage.getItem("settings"))
-    ? JSON.parse(localStorage.getItem("settings")).darkTheme
-    : false,
-  hardMode: false,
-  expandedMode: false,
-  // ...(JSON.parse(localStorage.getItem("settings")) || {
-  //   darkTheme: false,
-  //   hardMode: false,
-  //   expandedMode: false,
-  // }),
-  toggleDarkTheme() {
-    this.darkTheme = !this.darkTheme;
-  },
-  toggleHardMode() {
-    this.hardMode = !this.hardMode;
-  },
-  toggleExpandedMode() {
-    this.expandedMode = !this.expandedMode;
-  },
+  ...(JSON.parse(localStorage.getItem("settings")) || {
+    darkTheme: false,
+    onboarding: false,
+    hardMode: false,
+    expandedMode: false,
+  }),
 });

@@ -8,8 +8,12 @@ body {
   @apply font-body transition-colors select-none dark:bg-black dark:text-white;
 }
 
+#app {
+  @apply mx-auto w-full max-w-lg h-full overflow-x-hidden
+}
+
 h1 {
-  @apply text-lg font-medium leading-none text-black dark:text-white;
+  @apply text-lg font-medium leading-none text-black dark:text-white focus:outline-none;
 }
 
 h2 {

@@ -12,6 +12,7 @@ module.exports = {
       screens: {
         sm: { raw: "(min-width: 20rem) and (min-height: 36rem)" },
         md: { raw: "(min-width: 24rem)" },
+        lg: { raw: "(min-width: 1112px)" },
         hi: { raw: "(min-height: 44rem)" },
       },
       animation: {

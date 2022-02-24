@@ -1,6 +1,7 @@
 <template>
   <BaseDialog close>
     <h1>How to play</h1>
+    <hr class="mt-3" />
     <p class="mt-3">Guess the secret word in six tries!</p>
     <p class="mt-3">
       Each guess must be a valid five-letter word. Hit the enter button to

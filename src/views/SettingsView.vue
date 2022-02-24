@@ -5,7 +5,7 @@
     <SettingsItem
       @switch="
         () => {
-          settings.toggleDarkTheme();
+          settings.darkTheme = !settings.darkTheme;
         }
       "
       :enabled="settings.darkTheme"
@@ -16,7 +16,7 @@
     <SettingsItem
       @switch="
         () => {
-          settings.toggleHardMode();
+          settings.hardMode = !settings.hardMode;
           $emit('initialize');
         }
       "
@@ -31,7 +31,7 @@
     <SettingsItem
       @switch="
         () => {
-          settings.toggleExpandedMode();
+          settings.expandedMode = !settings.expandedMode;
           $emit('initialize');
         }
       "

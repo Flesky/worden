@@ -7,8 +7,7 @@
     "preview": "vite preview --port 5050",
     "https-preview": "serve dist",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "deploy": "firebase deploy --only hosting:worden",
-    "deploy beta": "firebase deploy --only hosting:baron-worden"
+    "deploy": "firebase deploy --only hosting:worden"
   },
   "dependencies": {
     "vue": "^3.2.29"
