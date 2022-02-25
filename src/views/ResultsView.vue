@@ -1,5 +1,5 @@
 <template>
-  <BaseDialog>
+  <BaseDialog close>
     <template v-if="game.won">
       <h1>{{ praise }}</h1>
       <p class="mt-3">

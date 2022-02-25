@@ -12992,6 +12992,7 @@ const praisePool = [
   "Fantastic!",
   "Brilliant!",
   "Nice work!",
+  "Magnificent!",
 ];
 
 export { wordList, wordPool, praisePool };

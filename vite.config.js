@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
+      registerType: "autoUpdate",
       includeAssets: [
         "favicon.svg",
         "favicon.ico",
@@ -19,7 +20,7 @@ export default defineConfig({
         name: "Worden | Unlimited Wordle games",
         short_name: "Worden",
         description:
-          "Play unlimited Wordle games in this rich, minimalist Wordle clone. Guess the secret word in six tries and share your results to your friends.",
+          "Play unlimited Wordle games here on Worden: an elegant, minimal take on the charming word guessing game. Guess the secret five letter word and share your results to your friends.",
         theme_color: "#000000",
         background_color: "#000000",
         icons: [

@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { wordList, wordPool } from "@/assets/words";
+import { wordList, wordPool } from "./assets/words";
 import IconInfo from "./components/icons/IconInfo.vue";
 import IconCog from "./components/icons/IconCog.vue";
 import TheLogo from "./components/TheLogo.vue";
@@ -59,7 +59,6 @@ import HelpView from "./views/HelpView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import ResultsView from "./views/ResultsView.vue";
 import BaseToastComponent from "./components/toast/BaseToastComponent.vue";
-
 String.prototype.replaceAt = function (replacement, index) {
   return (
     this.substring(0, index) +
@@ -123,7 +122,7 @@ export default {
     // If params, initialize param, override local
     // If not params, load local storage
     if (Object.keys(params).length) {
-      if (params.word) {
+      if (params.word && params.word !== this.game.gameId) {
         const status = this.initialize(params.word);
         if (status) this.view.pushToast(status);
       }
@@ -187,6 +186,7 @@ export default {
         this.shakeRow = null;
       }, 500);
     },
+
     initializeKeyboard() {
       this.keyboard = [];
       ["QWERTYUIOP", " ASDFGHJKL ", "→ZXCVBNM⌫"].forEach((row) => {
@@ -203,6 +203,7 @@ export default {
         );
       });
     },
+
     updateKeyboard(guess, guessString) {
       this.keyboard.forEach((row) => {
         row.forEach((key) => {
@@ -210,61 +211,64 @@ export default {
             guess
               .filter((letter) => letter.letter === key.letter)
               .forEach((letter) => {
-                if (key.evaluation === "correct") return;
-                else if (
-                  letter.evaluation === "correct" ||
-                  key.evaluation === undefined
-                ) {
-                  key.evaluation = letter.evaluation;
+                if (key.evaluation !== "correct") {
+                  if (
+                    letter.evaluation === "correct" ||
+                    key.evaluation === undefined
+                  ) {
+                    key.evaluation = letter.evaluation;
+                  }
                 }
               });
           }
         });
       });
     },
+
     initialize(gameId) {
       this.view.setView();
       this.guess = [];
       this.initializeKeyboard();
       return this.game.initialize(gameId);
     },
+
     handleClick(key) {
+      if (this.over) return this.view.setView("results");
       if (key.letter) this.type(key.letter);
       else if (key.button === "⌫") this.backspace();
       else if (key.button === "→") this.enter();
     },
+
     handleKeydown(key) {
       if (key.altKey || key.ctrlKey || key.shiftKey) return;
       key = key.keyCode;
 
       switch (key) {
-        case 8: // backspace
+        case 8:
           this.backspace();
           break;
-        case 13: // enter
+        case 13:
           this.enter();
           break;
         // case 27: // escape
-        //   this.view.setView();
-        //   break;
-        case 32: // space
-          break;
+        // case 32: // space
         default:
           if (key >= 65 && key <= 90) this.type(String.fromCharCode(key));
           break;
       }
     },
+
     type(letter) {
       if (this.guess.length < 5 && !this.over) this.guess.push({ letter });
     },
+
     backspace() {
       if (!this.over) this.guess.pop();
     },
-    enter() {
-      if (this.over) return this.initialize();
 
+    enter() {
       const guess = this.guess;
-      const guesses = this.game.guesses;
+      const { guesses, secretWord } = this.game;
 
       if (guess.length === 0) return;
 
@@ -299,10 +303,11 @@ export default {
         return;
       }
 
+      const { hardMode } = this.settings;
       if (!wordList.concat(wordPool).includes(guessString)) {
         this.shake();
         this.view.pushToast("Not in word list");
-        if (this.settings.hardMode) {
+        if (hardMode) {
           for (let i = 4; i >= 0; --i) {
             this.guess[i].evaluation = "invalid";
           }
@@ -312,8 +317,8 @@ export default {
         return;
       }
 
-      const secretWordString = `${this.game.secretWord}`.split("");
-      if (this.settings.hardMode) {
+      const secretWordString = `${secretWord}`.split("");
+      if (hardMode) {
         let error = null;
         errorChecking: for (let checkGuess of guesses) {
           for (let i = 0; i < 5; ++i) {
