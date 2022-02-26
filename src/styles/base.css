@@ -4,8 +4,22 @@ body,
   @apply h-full;
 }
 
+@layer base {
+  .strong {
+    @apply text-black dark:text-white
+  }
+
+  .muted {
+    @apply text-gray-800 dark:text-gray-200
+  }
+
+  .light {
+    @apply text-gray-600 dark:text-gray-400
+  }
+}
+
 body {
-  @apply font-body transition-colors select-none dark:bg-black dark:text-white;
+  @apply font-body transition-colors select-none light dark:bg-black;
 }
 
 #app {
@@ -13,23 +27,23 @@ body {
 }
 
 h1 {
-  @apply text-lg font-medium leading-none text-black dark:text-white focus:outline-none;
+  @apply text-lg font-medium leading-none strong;
 }
 
 h2 {
-  @apply font-medium leading-none text-gray-800 dark:text-gray-200;
+  @apply font-medium leading-none muted;
 }
 
 p {
-  @apply text-sm leading-6 text-gray-600 dark:text-gray-400;
+  @apply text-sm leading-6;
 }
 
 a {
-  @apply text-gray-800 underline decoration-current underline-offset-2 dark:text-gray-200;
+  @apply underline decoration-current underline-offset-2 muted;
 }
 
 svg {
-  @apply fill-current;
+  @apply strong fill-current;
 }
 
 hr {

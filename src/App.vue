@@ -59,6 +59,8 @@ import HelpView from "./views/HelpView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import ResultsView from "./views/ResultsView.vue";
 import BaseToastComponent from "./components/toast/BaseToastComponent.vue";
+import { statistics } from "./stores/statistics";
+
 String.prototype.replaceAt = function (replacement, index) {
   return (
     this.substring(0, index) +
@@ -93,6 +95,7 @@ export default {
       settings,
       view,
       game,
+      statistics
     };
   },
   computed: {
@@ -102,13 +105,10 @@ export default {
     board() {
       return Object.assign(
         new Array(6).fill(Array(5)),
-        !this.over
+        !this.game.status
           ? this.game.guesses.concat([this.fillGuess])
           : this.game.guesses
       );
-    },
-    over() {
-      return this.game.guesses.length > 5 || this.game.won;
     },
   },
   created() {
@@ -138,12 +138,7 @@ export default {
       history.replaceState(null, "", "/");
     }
 
-    if (!this.settings.onboarding) {
-      this.view.setView("help");
-      this.settings.onboarding = true;
-    }
-
-    if (this.over || !this.game.secretWord) {
+    if (this.game.status || !this.game.secretWord) {
       this.initialize();
     } else {
       this.game.guesses.forEach((guess) => {
@@ -152,6 +147,11 @@ export default {
           guess.map((letter) => letter.letter).join("")
         );
       });
+    }
+
+    if (!this.settings.onboarding) {
+      this.view.setView("help");
+      this.settings.onboarding = true;
     }
   },
   watch: {
@@ -172,11 +172,6 @@ export default {
         localStorage.setItem("game", JSON.stringify(val));
       },
       deep: true,
-    },
-    over: {
-      handler(val) {
-        if (val) this.view.setView("results");
-      },
     },
   },
   methods: {
@@ -233,7 +228,7 @@ export default {
     },
 
     handleClick(key) {
-      if (this.over) return this.view.setView("results");
+      if (this.game.status) return this.view.setView("results");
       if (key.letter) this.type(key.letter);
       else if (key.button === "⌫") this.backspace();
       else if (key.button === "→") this.enter();
@@ -259,11 +254,11 @@ export default {
     },
 
     type(letter) {
-      if (this.guess.length < 5 && !this.over) this.guess.push({ letter });
+      if (this.guess.length < 5 && !this.game.status) this.guess.push({ letter });
     },
 
     backspace() {
-      if (!this.over) this.guess.pop();
+      if (!this.game.status) this.guess.pop();
     },
 
     enter() {
@@ -375,13 +370,19 @@ export default {
 
       this.updateKeyboard(guess, guessString);
 
-      if (correct) {
-        this.game.won = true;
-      }
-
       guesses.push(guess);
-
       this.guess = [];
+
+      if (correct) {
+        this.game.status = "WON";
+      }
+      else if (guesses.length > 5) {
+        this.game.status = "LOSS"
+      }
+      if (this.game.status) {
+        this.statistics.addGame(this.game)
+        this.view.setView("results")
+      }
     },
   },
 };

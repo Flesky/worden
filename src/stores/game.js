@@ -7,7 +7,7 @@ export const game = reactive({
     secretWord: null,
     gameId: null,
     guesses: [],
-    won: false,
+    status: null,
   }),
 
   initialize(gameId) {
@@ -35,7 +35,7 @@ export const game = reactive({
       this.gameId = this.gameId.slice(0, this.gameId.indexOf("="));
     }
     this.guesses = [];
-    this.won = false;
+    this.status = null;
     return status;
   },
 });

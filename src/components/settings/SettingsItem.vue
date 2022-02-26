@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import BaseSwitch from "../BaseSwitch.vue";
+import BaseSwitch from "./SettingsItemSwitch.vue";
 
 export default {
   components: { BaseSwitch },
