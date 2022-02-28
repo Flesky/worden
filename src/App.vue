@@ -95,7 +95,7 @@ export default {
       settings,
       view,
       game,
-      statistics
+      statistics,
     };
   },
   computed: {
@@ -173,6 +173,12 @@ export default {
       },
       deep: true,
     },
+    statistics: {
+      handler(val) {
+        localStorage.setItem("statistics", JSON.stringify(val));
+      },
+      deep: true,
+    },
   },
   methods: {
     shake() {
@@ -246,7 +252,10 @@ export default {
           this.enter();
           break;
         // case 27: // escape
-        // case 32: // space
+        case 32: // space
+          if (this.game.status) this.initialize();
+          else this.guess.push({ letter: " " });
+          break;
         default:
           if (key >= 65 && key <= 90) this.type(String.fromCharCode(key));
           break;
@@ -254,7 +263,8 @@ export default {
     },
 
     type(letter) {
-      if (this.guess.length < 5 && !this.game.status) this.guess.push({ letter });
+      if (this.guess.length < 5 && !this.game.status)
+        this.guess.push({ letter });
     },
 
     backspace() {
@@ -292,6 +302,11 @@ export default {
         }
       }
 
+      if (guessString.includes(" ")) {
+        this.view.pushToast("Can't include blanks");
+        this.shake();
+        return;
+      }
       if (guess.length < 5) {
         this.view.pushToast("Not enough letters");
         this.shake();
@@ -375,13 +390,12 @@ export default {
 
       if (correct) {
         this.game.status = "WON";
-      }
-      else if (guesses.length > 5) {
-        this.game.status = "LOSS"
+      } else if (guesses.length > 5) {
+        this.game.status = "LOSS";
       }
       if (this.game.status) {
-        this.statistics.addGame(this.game)
-        this.view.setView("results")
+        this.statistics.addGame(this.game);
+        this.view.setView("results");
       }
     },
   },

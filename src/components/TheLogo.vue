@@ -2,9 +2,9 @@
   <!--  <TransitionGroup tag="div" name="fade" class="flex items-center space-x-1 transition">-->
   <div class="flex items-center space-x-1">
     <div
-      class="text-xl leading-none font-display text-light sm:text-2xl dark:text-white"
+      class="text-2xl tracking-tighter leading-none font-display text-light dark:text-white"
     >
-      worden
+      Worden
     </div>
     <div
       v-if="settings.hardMode"

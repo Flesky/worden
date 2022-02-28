@@ -118,7 +118,7 @@ export default {
       );
     },
     maxGuesses() {
-      return Math.max(...Object.values(this.statistics.guesses));
+      return Math.max(...Object.values(this.statistics.guesses)) || 1;
     },
   },
   created() {

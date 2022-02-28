@@ -1,6 +1,6 @@
 <template>
   <BaseDialog close>
-    <h1>Interface</h1>
+    <h1>Settings</h1>
     <hr class="mt-3" />
     <SettingsItem
       @switch="
@@ -11,8 +11,6 @@
       :enabled="settings.darkTheme"
       ><h2>Dark theme</h2></SettingsItem
     >
-    <h1 class="mt-12">Difficulty</h1>
-    <hr class="mt-3" />
     <SettingsItem
       @switch="
         () => {
