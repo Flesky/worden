@@ -323,6 +323,15 @@ export default {
           }
           guesses.push(guess);
           this.guess = [];
+
+          console.log("Hello")
+          if (guesses.length > 5) {
+            this.game.status = "LOSS";
+          }
+          if (this.game.status) {
+            this.statistics.addGame(this.game);
+            this.view.setView("results");
+          }
         }
         return;
       }

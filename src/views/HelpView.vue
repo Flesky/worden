@@ -56,6 +56,29 @@
     <p class="mt-2">
       The letter <span class="font-bold">E</span> is not in the word.
     </p>
+    <h2 class="mt-6">Hard mode</h2>
+    <p class="mt-3">
+      Be careful! In hard mode, invalid guesses count towards your guesses while
+      not revealing any tiles.
+    </p>
+    <!--    <p class="mt-3">-->
+    <!--      Be careful! In hard mode, non-word guesses are marked invalid — they-->
+    <!--      count towards your guesses while not revealing any tiles.-->
+    <!--    </p>-->
+    <BoardRowComponent
+      :word="[
+        { letter: 'F', evaluation: 'invalid' },
+        { letter: 'R', evaluation: 'invalid' },
+        { letter: 'E', evaluation: 'invalid' },
+        { letter: 'U', evaluation: 'invalid' },
+        { letter: 'D', evaluation: 'invalid' },
+      ]"
+      demo
+      class="mt-3"
+    ></BoardRowComponent>
+    <p class="mt-2">
+      <span class="font-bold">FREUD</span> is not a valid word.
+    </p>
   </BaseDialog>
 </template>
 

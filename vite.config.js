@@ -20,7 +20,7 @@ export default defineConfig({
         name: "Worden | Unlimited Wordle games",
         short_name: "Worden",
         description:
-          "Play unlimited Wordle games here on Worden: an elegant, minimal take on the charming word guessing game. Guess the secret five letter word and share your results to your friends.",
+          "Play unlimited Wordle games here on Worden. Guess the secret five letter word and share your results to your friends.",
         theme_color: "#000000",
         background_color: "#000000",
         icons: [
@@ -31,13 +31,13 @@ export default defineConfig({
             purpose: "any maskable",
           },
           {
-            src: "pwa-192x192.png",
-            sizes: "192x192",
+            src: "pwa-512x512.png",
+            sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "pwa-512x512.png",
-            sizes: "512x512",
+            src: "pwa-192x192.png",
+            sizes: "192x192",
             type: "image/png",
           },
         ],
