@@ -10,6 +10,7 @@
     "deploy": "firebase deploy --only hosting:worden"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.5.0",
     "vue": "^3.2.29"
   },
   "devDependencies": {

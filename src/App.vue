@@ -324,7 +324,7 @@ export default {
           guesses.push(guess);
           this.guess = [];
 
-          console.log("Hello")
+          console.log("Hello");
           if (guesses.length > 5) {
             this.game.status = "LOSS";
           }

@@ -39,9 +39,14 @@
       <p>Use the complete word list that contains harder to guess words</p>
     </SettingsItem>
     <h1 class="mt-12">About</h1>
-    <hr class="mt-3">
-    <p class="mt-3">Worden is an elegant, minimal take on the charming word guessing game <a href="https://www.powerlanguage.co.uk/wordle/">Wordle</a>.</p>
-    <p class="mt-3">Developed by <a href="https://twitter.com/brn_rdrg">Baron</a>. This is still a work-in-progress.</p>
+    <hr class="mt-3" />
+    <p class="mt-3">
+      Worden is an elegant, minimal take on the charming word guessing game
+      <a href="https://www.powerlanguage.co.uk/wordle/">Wordle</a>.
+    </p>
+    <p class="mt-3">
+      Developed by Baron#0157. This is still a work-in-progress.
+    </p>
   </BaseDialog>
 </template>
 

@@ -3,13 +3,17 @@
     <template v-if="game.status === 'WON'">
       <h1>{{ praise }}</h1>
       <p class="mt-3">
-        You got <span class="font-bold">{{ game.secretWord }}</span> in {{ game.guesses.length }}
+        You got <span class="font-bold">{{ game.secretWord }}</span> in
+        {{ game.guesses.length }}
         {{ game.guesses.length === 1 ? "try" : "tries" }}.
       </p>
     </template>
     <template v-else>
       <h1 ref="heading" tabindex="-1">Better luck next time!</h1>
-      <p class="mt-3">The word was <span class="font-bold">{{ game.secretWord }}</span>.</p>
+      <p class="mt-3">
+        The word was <span class="font-bold">{{ game.secretWord }}</span
+        >.
+      </p>
     </template>
 
     <h1 class="mt-12">Statistics</h1>

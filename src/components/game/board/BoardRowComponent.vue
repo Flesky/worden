@@ -1,26 +1,27 @@
 <template>
-  <BoardRow :center="demo">
+  <div
+    class="flex space-x-1 w-full"
+    :class="{ 'justify-center' : !demo, 'animate-shake' : shake}">
     <BoardTile
       v-for="(tile, i) in word"
       :key="i"
       :tile="tile"
-      :small="demo"
-    ></BoardTile>
-  </BoardRow>
+      :small="demo"/>
+  </div>
 </template>
 
 <script>
-import BoardRow from "./BoardRow.vue";
 import BoardTile from "./BoardTile.vue";
 
 export default {
-  components: { BoardRow, BoardTile },
+  components: {  BoardTile },
   props: {
     word: Object,
     demo: {
       type: Boolean,
       default: false,
     },
+    shake: Boolean
   },
 };
 </script>

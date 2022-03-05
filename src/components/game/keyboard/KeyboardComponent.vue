@@ -1,27 +1,27 @@
 <template>
-  <KeyboardContainer>
-    <KeyboardRow v-for="(row, i) in keyboard" :key="i">
+  <div id="keyboard" class="space-y-1 mx-2">
+    <div
+      class="flex justify-center ml-[-0.125rem] w-full"
+      v-for="(row, i) in keyboard"
+      :key="i"
+    >
       <template v-for="(key, j) in row" :key="j">
-        <KeyboardSpacer v-if="key.spacer"></KeyboardSpacer>
+        <div v-if="key.spacer" class="w-[1.375rem] h-10"></div>
         <KeyboardButton
           v-else
           :keyboardKey="key"
           @mouseup.prevent="$emit('handleClick', key)"
-        ></KeyboardButton> </template></KeyboardRow
-  ></KeyboardContainer>
+        />
+      </template>
+    </div>
+  </div>
 </template>
 
 <script>
-import KeyboardRow from "./KeyboardRow.vue";
-import KeyboardContainer from "./KeyboardContainer.vue";
-import KeyboardSpacer from "./KeyboardSpacer.vue";
 import KeyboardButton from "./KeyboardButton.vue";
 
 export default {
   components: {
-    KeyboardSpacer,
-    KeyboardContainer,
-    KeyboardRow,
     KeyboardButton,
   },
   props: {

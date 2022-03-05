@@ -7,6 +7,6 @@
 
 <script>
 export default {
-  name: "StatisticsItem"
+  name: "StatisticsItem",
 };
 </script>
