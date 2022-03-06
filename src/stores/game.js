@@ -8,9 +8,10 @@ export const game = reactive({
     gameId: null,
     guesses: [],
     status: null,
+    hardMode: false,
   }),
 
-  initialize(gameId) {
+  initialize(gameId, hardMode) {
     let status = null;
     this.secretWord = null;
     if (gameId) {
@@ -36,6 +37,11 @@ export const game = reactive({
     }
     this.guesses = [];
     this.status = null;
+    if (hardMode !== undefined) {
+      this.hardMode = hardMode;
+    } else {
+      this.hardMode = settings.hardMode;
+    }
     return status;
   },
 });

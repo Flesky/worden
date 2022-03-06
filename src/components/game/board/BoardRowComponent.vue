@@ -1,5 +1,6 @@
 <template>
   <div
+    role="grid"
     class="flex space-x-1 w-full"
     :class="{ 'justify-center' : !demo, 'animate-shake' : shake}">
     <BoardTile

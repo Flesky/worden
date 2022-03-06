@@ -1,5 +1,6 @@
 <template>
   <div
+    role="gridcell"
     class="inline-flex justify-center items-center w-10 h-10 text-lg font-bold rounded border-2 transition"
     :class="[evaluationStyle, smallStyle]"
   >

@@ -1,65 +1,60 @@
 <template>
   <TheHeader>
-    <button
-      aria-label="Info"
-      @click="view.setView('help')"
-      @keydown.esc="$event.target.blur()"
-    >
-      <IconInfo></IconInfo>
-    </button>
-    <TheLogo></TheLogo>
-    <button
-      aria-label="Settings"
-      @click="view.setView('settings')"
-      @keydown.esc="$event.target.blur()"
-    >
-      <IconCog></IconCog>
-    </button>
+    <IconButton path="help">
+      <IconInfo />
+    </IconButton>
+<!--    <IconButton path="share"> <IconShare /></IconButton>-->
+    <TheLogo />
+<!--    <IconButton path="statistics"><IconChart /></IconButton>-->
+    <IconButton path="settings"> <IconCog /></IconButton>
   </TheHeader>
 
-  <BaseMain>
-    <BoardComponent :board="board" :shake="shakeRow"></BoardComponent>
-    <KeyboardComponent
-      :keyboard="keyboard"
-      @handle-click="handleClick"
-    ></KeyboardComponent>
-  </BaseMain>
+  <main id="game" class="flex flex-col h-[calc(100%_-_3.5rem)] pb-2">
+    <BoardComponent :board="board" :shake="shakeRow" />
+    <KeyboardComponent :keyboard="keyboard" @handle-click="handleClick" />
+  </main>
 
-  <BaseToastComponent
-    :toasts="view.toasts"
-    @toast-expire="view.toasts.shift()"
-  ></BaseToastComponent>
+  <Teleport to="body">
+    <BaseToastComponent
+      :toasts="view.toasts"
+      @toast-expire="view.toasts.shift()"
+    />
 
-  <Transition name="slide-fade">
-    <HelpView v-if="view.name === 'help'"></HelpView>
-    <SettingsView
-      v-else-if="view.name === 'settings'"
-      @initialize="initialize"
-    ></SettingsView>
-    <ResultsView
-      v-else-if="view.name === 'results'"
-      @initialize="initialize"
-    ></ResultsView>
-  </Transition>
+    <Transition name="slide-fade">
+      <HelpView v-if="view.name === 'help'" />
+<!--      <ShareView v-else-if="view.name === 'share'"-->
+<!--      @initialize="initializeGame"/>-->
+<!--      <StatisticsView v-else-if="view.name === 'statistics'" />-->
+      <SettingsView v-else-if="view.name === 'settings'" />
+      <ResultsView
+        v-else-if="view.name === 'results'"
+        @initialize="initializeGame"
+      />
+    </Transition>
+  </Teleport>
 </template>
 
 <script>
 import { wordList, wordPool } from "./assets/words";
-import IconInfo from "./components/icons/IconInfo.vue";
-import IconCog from "./components/icons/IconCog.vue";
-import TheLogo from "./components/TheLogo.vue";
 import TheHeader from "./components/TheHeader.vue";
+import TheLogo from "./components/TheLogo.vue";
+import IconButton from "./components/IconButton.vue";
+import IconInfo from "./components/icons/IconInfo.vue";
+// import IconShare from "./components/icons/IconShare.vue";
+// import IconChart from "./components/icons/IconChart.vue";
+import IconCog from "./components/icons/IconCog.vue";
 import { settings } from "./stores/settings";
 import { game } from "./stores/game";
 import { view } from "./stores/view";
+import { statistics } from "./stores/statistics";
 import KeyboardComponent from "./components/game/keyboard/KeyboardComponent.vue";
 import BoardComponent from "./components/game/board/BoardComponent.vue";
-import BaseMain from "./components/BaseMain.vue";
 import HelpView from "./views/HelpView.vue";
+// import ShareView from "./views/ShareView.vue";
+// import StatisticsView from "./views/StatisticsView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import ResultsView from "./views/ResultsView.vue";
 import BaseToastComponent from "./components/toast/BaseToastComponent.vue";
-import { statistics } from "./stores/statistics";
 
 String.prototype.replaceAt = function (replacement, index) {
   return (
@@ -72,17 +67,21 @@ String.prototype.replaceAt = function (replacement, index) {
 export default {
   name: "GameView",
   components: {
-    BaseToastComponent,
-    ResultsView,
-    SettingsView,
-    HelpView,
-    BoardComponent,
-    TheHeader,
+    IconButton,
     IconInfo,
+    // IconShare,
     IconCog,
+    // IconChart,
+    TheHeader,
     TheLogo,
     KeyboardComponent,
-    BaseMain,
+    BoardComponent,
+    HelpView,
+    // StatisticsView,
+    // ShareView,
+    SettingsView,
+    ResultsView,
+    BaseToastComponent,
   },
   data() {
     return {
@@ -122,24 +121,20 @@ export default {
     // If params, initialize param, override local
     // If not params, load local storage
     if (Object.keys(params).length) {
-      if (params.word && params.word !== this.game.gameId) {
-        const status = this.initialize(params.word);
-        if (status) this.view.pushToast(status);
-      }
-      if (params.mode) {
-        switch (params.mode) {
-          case "hard":
-            this.settings.hardMode = true;
-            break;
+      if (params.word) {
+        let status;
+        if (params.mode && params.mode === "hard") {
+          status = this.initializeGame(params.word, true);
+        } else {
+          status = this.initializeGame(params.word, false);
         }
-      } else {
-        this.settings.hardMode = false;
+        if (status) this.view.pushToast(status);
       }
       history.replaceState(null, "", "/");
     }
 
     if (this.game.status || !this.game.secretWord) {
-      this.initialize();
+      this.initializeGame();
     } else {
       this.game.guesses.forEach((guess) => {
         this.updateKeyboard(
@@ -226,11 +221,11 @@ export default {
       });
     },
 
-    initialize(gameId) {
+    initializeGame(gameId, hardMode = settings.hardMode) {
       this.view.setView();
       this.guess = [];
       this.initializeKeyboard();
-      return this.game.initialize(gameId);
+      return this.game.initialize(gameId, hardMode);
     },
 
     handleClick(key) {
@@ -249,12 +244,20 @@ export default {
           this.backspace();
           break;
         case 13:
-          this.enter();
+          if (document.activeElement === document.body) {
+            this.enter();
+          }
           break;
-        // case 27: // escape
+        case 27: // escape
+          this.view.setView();
+          break;
         case 32: // space
-          if (this.game.status) this.initialize();
-          else this.guess.push({ letter: " " });
+          if (document.activeElement === document.body) {
+            if (this.game.status) this.initializeGame();
+            else if (!this.view.name) {
+              this.guess.push({ letter: " " });
+            }
+          }
           break;
         default:
           if (key >= 65 && key <= 90) this.type(String.fromCharCode(key));
@@ -273,7 +276,7 @@ export default {
 
     enter() {
       const guess = this.guess;
-      const { guesses, secretWord } = this.game;
+      const { guesses, secretWord, hardMode } = this.game;
 
       if (guess.length === 0) return;
 
@@ -294,6 +297,7 @@ export default {
           "CHAI",
           "DAVID",
           "ASIA",
+          "JOMA",
         ];
         if (playtesters.includes(guessString)) {
           this.view.pushToast("Thanks for playtesting the game!");
@@ -313,7 +317,6 @@ export default {
         return;
       }
 
-      const { hardMode } = this.settings;
       if (!wordList.concat(wordPool).includes(guessString)) {
         this.shake();
         this.view.pushToast("Not in word list");
@@ -324,7 +327,6 @@ export default {
           guesses.push(guess);
           this.guess = [];
 
-          console.log("Hello");
           if (guesses.length > 5) {
             this.game.status = "LOSS";
           }

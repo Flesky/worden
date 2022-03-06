@@ -16,6 +16,22 @@ body,
   .light {
     @apply text-gray-600 dark:text-gray-400
   }
+
+  .correct {
+    @apply text-white bg-green border-0;
+  }
+
+  .present {
+    @apply text-white bg-yellow border-0;
+  }
+
+  .absent {
+    @apply text-white border-0 bg-gray-500 dark:bg-gray-700;
+  }
+
+  .invalid {
+    @apply text-white bg-red border-0;
+  }
 }
 
 body {
