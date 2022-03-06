@@ -15,6 +15,13 @@ dist-ssr
 coverage
 *.local
 
+
+firebase.json
+.gitignore
+.firebaserc
+.package-lock.json
+
+
 /cypress/videos/
 /cypress/screenshots/
 

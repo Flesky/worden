@@ -22,9 +22,7 @@
 
     <Transition name="slide-fade">
       <HelpView v-if="view.name === 'help'" />
-<!--      <ShareView v-else-if="view.name === 'share'"-->
-<!--      @initialize="initializeGame"/>-->
-<!--      <StatisticsView v-else-if="view.name === 'statistics'" />-->
+      <AboutView v-else-if="view.name === 'about'"/>
       <SettingsView v-else-if="view.name === 'settings'" />
       <ResultsView
         v-else-if="view.name === 'results'"
@@ -51,6 +49,7 @@ import KeyboardComponent from "./components/game/keyboard/KeyboardComponent.vue"
 import BoardComponent from "./components/game/board/BoardComponent.vue";
 import HelpView from "./views/HelpView.vue";
 // import ShareView from "./views/ShareView.vue";
+import AboutView from "./views/AboutView.vue";
 // import StatisticsView from "./views/StatisticsView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import ResultsView from "./views/ResultsView.vue";
@@ -78,6 +77,7 @@ export default {
     BoardComponent,
     HelpView,
     // StatisticsView,
+    AboutView,
     // ShareView,
     SettingsView,
     ResultsView,

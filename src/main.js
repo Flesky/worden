@@ -7,5 +7,3 @@ registerSW();
 const app = createApp(App);
 
 app.mount("#app");
-
-// TODO: Make splash screen black
